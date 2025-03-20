@@ -7,13 +7,11 @@
 
 
 #include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <ctype.h>
+#include <stdbool.h>
 
 #include "../include/S_Matrix.h"
-#include "asking_for_continue.c"
 
+extern _Bool _continue();
 
 int main(){
 
