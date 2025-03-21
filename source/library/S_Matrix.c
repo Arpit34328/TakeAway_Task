@@ -33,32 +33,35 @@ matrix* create_S_Matrix(uint32_t rows, uint32_t columns){
 
 	if (M == NULL) return NULL;
 
-	M->rows = rows;
-	M->columns = columns;
+	M->row = rows;
+	M->col = columns;
 
-	// Allocate rowlist
-	M->rowList = (node**)malloc(rows * sizeof(node*));
-	if (M->rowList == NULL) {
-		free(M);
-		return NULL;
-	}
-
-	// Allocate columnlist
-	M->columnList = (node**)malloc(columns * sizeof(node*));
-	if (M->columnList == NULL) {
-		free(M->rowList);
-		free(M);
-		return NULL;
-	}
-
-	for (uint32_t row_ind = 0; row_ind < rows; row_ind++) {
-		M->rowList[row_ind] = NULL;
-	}
-
-	for (uint32_t col_ind = 0; col_ind < columns; col_ind++) {
-		M->columnList[col_ind] = NULL;
-	}
+	
 
 	return M;
+
+}
+
+
+node* create_node(uint32_t row, uint32_t col, double value){
+
+	node* m_node = (node*)malloc(sizeof(node*));
+
+	m_node->value = value;
+	m_node->row = row;
+	m_node->column = column;
+	m_node->row_ptr = NULL;
+	m_node->col_ptr = NULL;
+
+	return m_node;
+
+}
+
+
+void insert_data(matrix* M, uint32_t row, uint32_t col, double value){
+
+	node* new_node = create_node(row, col, data);
+
+
 
 }

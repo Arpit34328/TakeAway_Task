@@ -2,15 +2,15 @@
 CC = gcc
 CFLAGS = -Wall -g -I./library
 
-# Diractories
+# Directories
 SRC_DIR = source
 BIN_DIR = bin
 BUILD_DIR = build
 
 # Output binary
-Target = $(BIN_DIR)/main
+TARGET = $(BIN_DIR)/main
 
-# Find all .c files in src diractory and its subduractories, excluding specific files
+# Find all .c files in src directory and its subdirectories, excluding specific files
 SRC_FILES = $(wildcard $(SRC_DIR)/*/*.c)
 OBJ_FILES = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(SRC_FILES))
 
@@ -23,7 +23,7 @@ $(TARGET): $(OBJ_FILES)
 	@$(CC) $(OBJ_FILES) -o $(TARGET)
 
 # Rule to compile source files to object files
-$(BUILD_DIR)/%.o : $(SRC_DIR)/%.c
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) -c $< -o $@
 
