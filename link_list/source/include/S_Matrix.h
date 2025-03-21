@@ -4,11 +4,17 @@
  * Date: 2025-03-19
  * Description: This file defines the basic structure and functionalities of the S_Matrix data structure.
  */
+
+
 #ifndef S_MATRIX_H
 #define S_MATRIX_H
+
+
 // Include necessary headers
 #include <stdint.h>
 #include <stdlib.h>
+
+
 /*
  * Struct: m_node
  * ----------------------------
@@ -27,6 +33,8 @@ typedef struct m_node {
         struct m_node* row_ptr;
         struct m_node* col_ptr;
 } m_node;
+
+
 /*
  * Struct: l_node
  * ----------------------------
@@ -41,6 +49,8 @@ typedef struct l_node {
         struct l_node* next;
         struct l_node* prev;
 } l_node;
+
+
 /*
  * Struct: matrix
  * ----------------------------
@@ -57,6 +67,8 @@ typedef struct matrix {
         uint32_t row;
         uint32_t col;
 } matrix;
+
+
 /*
  * Function: create_list_node
  * ----------------------------
@@ -68,6 +80,8 @@ typedef struct matrix {
  *   Allocates memory for the list node and initializes its next and prev pointers to NULL.
  */
 l_node* create_list_node();
+
+
 /*
  * Function: create_mat_node
  * ----------------------------
@@ -84,6 +98,8 @@ l_node* create_list_node();
  *   Sets row_ptr and col_ptr to NULL.
  */
 m_node* create_mat_node(uint32_t row, uint32_t col, double value);
+
+
 /*
  * Function: create_S_Matrix
  * ----------------------------
@@ -99,6 +115,8 @@ m_node* create_mat_node(uint32_t row, uint32_t col, double value);
  *   Frees allocated memory if any allocation fails.
  */
 matrix* create_S_Matrix(uint32_t rows, uint32_t columns);
+
+
 /*
  * Function: insert_data
  * ----------------------------
@@ -113,4 +131,9 @@ matrix* create_S_Matrix(uint32_t rows, uint32_t columns);
  *   Inserts the value at the specified position in the sparse matrix.
  */
 void insert_data(matrix* M, uint32_t row, uint32_t column, double value);
+
+
+
+
+
 #endif // S_MATRIX_H

@@ -4,10 +4,14 @@
  * Date: 2025-03-19
  * Description: This file implements the functions and operations for the S_Matrix data structure.
  */
+
+
 // Include necessary headers
 #include <stdint.h>
 #include <stdlib.h>
 #include "../include/S_Matrix.h"
+
+
 /*
  * Function: create_list_node
  * ----------------------------
@@ -26,6 +30,8 @@ l_node* create_list_node() {
         list_node->prev = NULL;
         return list_node; // Added: Return statement
 }
+
+
 /*
  * Function: create_mat_node
  * ----------------------------
@@ -51,6 +57,8 @@ m_node* create_mat_node(uint32_t row, uint32_t col, double value){
         mat_node->col_ptr = NULL;
         return mat_node; // Fixed: Return mat_node, not m_node
 }
+
+
 /*
  * Function: create_S_Matrix
  * ----------------------------
@@ -88,6 +96,8 @@ matrix* create_S_Matrix(uint32_t rows, uint32_t columns){
         
         return M;
 }
+
+
 /*
  * Function: insert_data
  * ----------------------------
@@ -99,10 +109,12 @@ matrix* create_S_Matrix(uint32_t rows, uint32_t columns){
  * @param value - Value to be inserted.
  */
 void insert_data(matrix* M, uint32_t row, uint32_t col, double value){
-        if (M == NULL || row >= M->row || col >= M->col) return; // Added: Boundary check
+
+	if (M == NULL || row >= M->row || col >= M->col) return; // Added: Boundary check
         
-        m_node* new_mat_node = create_mat_node(row, col, value); // Fixed: Use create_mat_node instead of create_node
-        if (new_mat_node == NULL) return;
+        m_node* new_mat_node = create_mat_node(row, col, value); 
+
+	if (new_mat_node == NULL) return;
         
         // Add code to insert the node into the matrix structure
         // This is a basic implementation - you may need to extend this
