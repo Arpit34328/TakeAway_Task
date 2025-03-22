@@ -153,6 +153,16 @@ uint16_t pq_frontPriority(P_Queue* p_queue);
 void pq_upgradePT(P_Queue* p_queue, char* patient_name, uint16_t new_priority);
 
 
+/*
+ * Function: heapify
+ * ----------------------------
+ * Reorganizes the queue to maintain the priority order after adding a new node.
+ *
+ * @param p_queue - Pointer to the priority queue.
+ * @param pos - Pointer to the node to be inserted in the proper position.
+ */
+void heapify(P_Queue* p_queue, q_node* pos);
+
 
 /*
  * Function: pq_isEmpty

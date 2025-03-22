@@ -74,16 +74,20 @@ P_Queue* PQ(){
  */
 void FreePQ(P_Queue* p_queue){
 
-        q_node* temp = p_queue->front;
+        if (!pq_isEmpty(p_queue)){
 
-        while (temp->next){
-                q_node* cur = temp;
-                temp = temp->next;
-                free(cur);
-        }
-        free(temp);
+		q_node* temp = p_queue->front;
 
-        free(p_queue);
+        	while (temp->next){
+                	q_node* cur = temp;
+                	temp = temp->next;
+                	free(cur);
+        	}
+        	free(temp);
+
+	}
+        
+	free(p_queue);
 
 }
 
@@ -102,20 +106,28 @@ void pq_newPT(P_Queue* p_queue, char* pt_name, uint16_t priority){
 
         if (pq_isEmpty(p_queue)){
                 p_queue->front = new_node;
+                p_queue->rear = new_node;
                 p_queue->last_priority = p_queue->front->priority;
         }
-        else
-                p_queue->rear->next = new_node;
-        p_queue->rear = new_node;
+        else {
+                if (new_node->priority < p_queue->front->priority) {
+                        new_node->next = p_queue->front;
+                        p_queue->front = new_node;
+                }
+                else if (new_node->priority >= p_queue->last_priority) {
+                        p_queue->rear->next = new_node;
+                        p_queue->rear = new_node;
+                        p_queue->last_priority = p_queue->rear->priority;
+                }
+                else {
+                        heapify(p_queue, new_node);
 
-        if ((p_queue->front != p_queue->rear) && p_queue->last_priority > p_queue->rear->priority) {
-
-                printf("You need to apply the heapyfi here\n");
-
+                        if (p_queue->rear->next) {
+                                p_queue->rear = p_queue->rear->next;
+                                p_queue->last_priority = p_queue->rear->priority;
+                        }
+                }
         }
-        else
-                p_queue->last_priority = p_queue->rear->priority;
-
 }
 
 /*
@@ -139,6 +151,9 @@ char* pq_processPT(P_Queue* p_queue){
                         p_queue->rear = NULL;
                         p_queue->last_priority = 0;
                 }
+		else
+			p_queue->front = temp->next;
+
                 patient_name = temp->patient_name;
                 free(temp);
         }
@@ -146,9 +161,8 @@ char* pq_processPT(P_Queue* p_queue){
         return patient_name;
 
 }
-
-/*
- * Function: pq_frontName
+ 
+/* Function: pq_frontName
  * ----------------------------
  * Gets the name of the patient at the front of the queue.
  *
@@ -197,21 +211,67 @@ void pq_upgradePT(P_Queue* p_queue, char* patient_name, uint16_t new_priority){
                 printf("Sorry! There is no patient\n");
         else{
                 q_node* temp = p_queue->front;
+                q_node* back_node = NULL;
 
                 while (temp){
                         if (!strcmp(temp->patient_name, patient_name)){
                                 if (new_priority > temp->priority)
                                         printf("You can not down grade the priority\n");
-                                else
-                                        printf("You need to apply the heapyfi here\n");
+                                else if(temp != p_queue->front){
+                                       
+				       	q_node* original_next = temp->next;
+                                        
+                                        back_node->next = temp->next;
+                                        temp->next = NULL;
+                                        
+                                        temp->priority = new_priority;
+                                        
+                                        heapify(p_queue, temp);
+                                        
+                                        if (p_queue->rear == temp && original_next == NULL) {
+                                                q_node* curr = p_queue->front;
+                                                while (curr->next) {
+                                                        curr = curr->next;
+                                                }
+                                                p_queue->rear = curr;
+                                                p_queue->last_priority = curr->priority;
+                                        }
+                                } 
+				else 
+                                        temp->priority = new_priority;        
+                                
                                 break;
                         }
+                        back_node = temp;
                         temp = temp->next;
                 }
         }
-
 }
 
+/*
+ * Function: heapify
+ * ----------------------------
+ * Reorganizes the queue to maintain the priority order after adding a new node.
+ *
+ * @param p_queue - Pointer to the priority queue.
+ * @param pos - Pointer to the node to be inserted in the proper position.
+ */
+void heapify(P_Queue* p_queue, q_node* pos){
+
+        q_node* temp = p_queue->front;
+
+        if (temp->priority > pos->priority){
+                pos->next = temp;
+                p_queue->front = pos;
+        }
+        else{
+                while (temp->next && temp->next->priority <= pos->priority)
+                        temp = temp->next;
+                pos->next = temp->next;
+                temp->next = pos;
+        }
+
+}
 
 /*
  * Function: pq_isEmpty
