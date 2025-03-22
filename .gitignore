@@ -1,6 +1,5 @@
-# Ignore the bin and build diractory
-link_list/build
-link_list/bin
-queue/build
-queue/bin
-
+# Ignore the bin and build directories
+link_list/build/
+link_list/bin/
+queue/build/
+queue/bin/
