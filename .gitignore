@@ -1,0 +1,6 @@
+# Ignore the bin and build diractory
+link_list/build
+link_list/bin
+queue/build
+queue/bin
+
