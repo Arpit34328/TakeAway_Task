@@ -23,4 +23,6 @@ int main(){
 		if (!_continue()) break;
 	
 	}
+
+	return 0;
 }

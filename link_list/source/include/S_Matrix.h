@@ -3,6 +3,7 @@
  * Authors: Arpit Patel, Dharma KaPatel
  * Date: 2025-03-19
  * Description: This file defines the basic structure and functionalities of the S_Matrix data structure.
+ *              The S_Matrix is a sparse matrix implementation using linked lists for efficient storage.
  */
 
 
@@ -13,6 +14,8 @@
 // Include necessary headers
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdbool.h>
+#include <stdio.h>
 
 
 /*
@@ -38,7 +41,7 @@ typedef struct m_node {
 /*
  * Struct: l_node
  * ----------------------------
- * Represents a node in a doubly linked list.
+ * Represents a node in a linked list.
  *
  * matrix_node: Pointer to a matrix node.
  * next: Pointer to the next node in the list.
@@ -52,6 +55,22 @@ typedef struct l_node {
 
 
 /*
+ * Struct: link_list
+ * ----------------------------
+ * Represents a linked list to store nodes.
+ *
+ * head: Pointer to the first node in the list.
+ * tail: Pointer to the last node in the list.
+ * size: Number of nodes in the list.
+ */
+typedef struct link_list {
+        l_node* head;
+        l_node* tail;
+        uint32_t size;
+} link_list;
+
+
+/*
  * Struct: matrix
  * ----------------------------
  * Represents the sparse matrix structure.
@@ -62,24 +81,44 @@ typedef struct l_node {
  * col: The number of columns in the matrix.
  */
 typedef struct matrix {
-        l_node** rowList;
-        l_node** columnList;
+        link_list* rowList;
+        link_list* columnList;
         uint32_t row;
         uint32_t col;
 } matrix;
 
 
 /*
- * Function: create_list_node
+ * Function: create_l_node
  * ----------------------------
- * Creates and initializes a list node.
+ * Creates and initializes a linked list node with the given matrix node data.
  *
- * @return Pointer to the list node, or NULL if allocation fails.
+ * @param data - Pointer to the matrix node to be stored in the linked list node.
  *
- * Description:
- *   Allocates memory for the list node and initializes its next and prev pointers to NULL.
+ * @return Pointer to the linked list node, or NULL if allocation fails.
  */
-l_node* create_list_node();
+l_node* create_l_node(m_node* data);
+
+
+/*
+ * Function: add_list_node
+ * ----------------------------
+ * Adds a new node to the end of the linked list.
+ *
+ * @param ll - Pointer to the linked list.
+ * @param data - Pointer to the matrix node to be stored in the new list node.
+ */
+void add_list_node(link_list* ll, m_node* data);
+
+
+/*
+ * Function: create_link_list
+ * ----------------------------
+ * Creates and initializes a new linked list.
+ *
+ * @return Pointer to the linked list, or NULL if allocation fails.
+ */
+link_list* create_link_list();
 
 
 /*
@@ -129,11 +168,66 @@ matrix* create_S_Matrix(uint32_t rows, uint32_t columns);
  *
  * Description:
  *   Inserts the value at the specified position in the sparse matrix.
+ *   If the position already contains a value, it updates the existing value.
  */
 void insert_data(matrix* M, uint32_t row, uint32_t column, double value);
 
 
+/*
+ * Function: duplicatevalue
+ * ----------------------------
+ * Checks if a specific value exists in the matrix.
+ *
+ * @param M - Pointer to the matrix.
+ * @param value - Value to search for.
+ *
+ * @return true if the value exists, false otherwise.
+ */
+bool duplicatevalue(matrix* M, double value);
 
+
+/*
+ * Function: resize
+ * ----------------------------
+ * Resizes the matrix by doubling its dimensions.
+ *
+ * @param M - Pointer to the matrix.
+ *
+ * @return true if resizing is successful, false otherwise.
+ */
+bool resize(matrix* M);
+
+
+/*
+ * Function: transpose
+ * ----------------------------
+ * Transposes the matrix, swapping rows and columns.
+ *
+ * @param M - Pointer to the matrix.
+ *
+ * @return true if transposition is successful, false otherwise.
+ */
+bool transpose(matrix* M);
+
+
+/*
+ * Function: displayMatrix
+ * ----------------------------
+ * Displays the matrix contents in a formatted manner.
+ *
+ * @param M - Pointer to the matrix.
+ */
+void displayMatrix(matrix* M);
+
+
+/*
+ * Function: free_S_Matrix
+ * ----------------------------
+ * Frees all memory associated with the matrix.
+ *
+ * @param M - Pointer to the matrix.
+ */
+void free_S_Matrix(matrix* M);
 
 
 #endif // S_MATRIX_H

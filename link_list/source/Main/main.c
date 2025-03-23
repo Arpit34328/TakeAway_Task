@@ -12,14 +12,17 @@
 #include "../include/S_Matrix.h"
 
 extern _Bool _continue();
+extern void _sparse_matrix();
 
 int main(){
 
 	while(1){
 
-		printf("Hello Friend!!");
+		_sparse_matrix();
 
 		if (!_continue()) break;
 	
 	}
+
+	return 0;
 }
