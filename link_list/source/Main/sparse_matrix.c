@@ -151,7 +151,7 @@ void _sparse_matrix() {
                                                         } while (getchar() != '\n');
                                                 }
                                         }
-                                        (duplicatevalue(M, value)) ? printf("Value %lf present in Sparse Matrix\n\n", value) : printf("Value %lf not present in Sparse Matrix\n\n", value);
+                                        (duplicatevalue(M, value)) ? printf("Value %.1lf present in Sparse Matrix\n\n", value) : printf("Value %.1lf not present in Sparse Matrix\n\n", value);
                                 }
                                 break;
                         case 'r':

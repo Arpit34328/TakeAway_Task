@@ -32,7 +32,7 @@ l_node* create_l_node(m_node* data) {
 
         new_l_node->matrix_node = data;
         new_l_node->next = NULL;
-        new_l_node->prev = NULL;  // Initialize prev pointer
+        new_l_node->prev = NULL;  
 
         return new_l_node;
 }
@@ -63,7 +63,7 @@ void add_list_node(link_list* ll, m_node* data) {
                 ll->tail = new_node;
                 ll->size = 1;
         } else {
-                new_node->prev = ll->tail;  // Set prev pointer
+                new_node->prev = ll->tail;  
                 ll->tail->next = new_node;
                 ll->tail = new_node;
                 ll->size++;
@@ -79,7 +79,7 @@ void add_list_node(link_list* ll, m_node* data) {
  * @return Pointer to the linked list, or NULL if allocation fails.
  */
 link_list* create_link_list() {
-        link_list* ll = (link_list*)malloc(sizeof(link_list));  // Corrected size
+        link_list* ll = (link_list*)malloc(sizeof(link_list)); 
 
         if (!ll) return NULL;
 
@@ -103,14 +103,14 @@ link_list* create_link_list() {
  * @return Pointer to the matrix node, or NULL if allocation fails.
  */
 m_node* create_mat_node(uint32_t row, uint32_t col, double value) {
-        m_node* new_m_node = (m_node*)malloc(sizeof(m_node));  // Corrected size
+        m_node* new_m_node = (m_node*)malloc(sizeof(m_node)); 
 
-        if (!new_m_node) return NULL;  // Corrected variable name
+        if (!new_m_node) return NULL; 
 
         new_m_node->row = row;
         new_m_node->column = col;
         new_m_node->value = value;
-        new_m_node->row_ptr = NULL;  // Initialize pointers
+        new_m_node->row_ptr = NULL;  
         new_m_node->col_ptr = NULL;
 
         return new_m_node;
@@ -205,7 +205,7 @@ void insert_data(matrix* M, uint32_t row, uint32_t column, double value) {
                 }
                 col_pos = col_ll->tail;
         } else {
-                col_pos = col_ll->head;  // Corrected from col_list to col_ll
+                col_pos = col_ll->head; 
                 col_index = 1;
                 while (col_index < column) {
                         col_pos = col_pos->next;
@@ -221,7 +221,7 @@ void insert_data(matrix* M, uint32_t row, uint32_t column, double value) {
                 }
                 row_pos = row_ll->tail;
         } else {
-                row_pos = row_ll->head;  // Corrected from row_list to row_ll
+                row_pos = row_ll->head; 
                 row_index = 1;
                 while (row_index < row) {
                         row_pos = row_pos->next;
@@ -233,11 +233,11 @@ void insert_data(matrix* M, uint32_t row, uint32_t column, double value) {
         if (!row_pos->matrix_node && !col_pos->matrix_node) {
                 col_pos->matrix_node = matrix_node;
                 row_pos->matrix_node = matrix_node;
-                return;  // Added return for clarity
+                return; 
         }
 
-        bool exist_col_m_node = false;  // Changed from _Bool to bool
-        bool exist_row_m_node = false;  // Changed from _Bool to bool
+        bool exist_col_m_node = false;  
+	bool exist_row_m_node = false;  
 
         // Case2: col_pos pointing to any node
         if (col_pos->matrix_node) {
@@ -250,7 +250,7 @@ void insert_data(matrix* M, uint32_t row, uint32_t column, double value) {
                         // Update value if node exists
                         if (col_pos->matrix_node->column == column) {
                                 col_pos->matrix_node->value = value;
-                                free(matrix_node);  // Free the newly created node
+                                free(matrix_node);  
                                 return;
                         }
                 } else {
@@ -270,7 +270,7 @@ void insert_data(matrix* M, uint32_t row, uint32_t column, double value) {
                         // Update value if node exists
                         if (row_pos->matrix_node->row == row) {
                                 row_pos->matrix_node->value = value;
-                                if (!exist_col_m_node) {  // Only free if not already freed
+                                if (!exist_col_m_node) { 
                                         free(matrix_node);
                                 }
                                 return;
@@ -323,7 +323,7 @@ void insert_data(matrix* M, uint32_t row, uint32_t column, double value) {
 
         if (exist_col_m_node && exist_row_m_node) {
                 printf("Node is already exists\n");
-                free(matrix_node);  // Free the node if it already exists
+                free(matrix_node);  
         } else {
                 if (cur_col_ptr) {
                         matrix_node->col_ptr = cur_col_ptr->col_ptr;
@@ -347,7 +347,7 @@ void insert_data(matrix* M, uint32_t row, uint32_t column, double value) {
  *
  * @return true if the value exists, false otherwise.
  */
-bool duplicatevalue(matrix* M, double value) {  // Changed _Bool to bool
+bool duplicatevalue(matrix* M, double value) { 
         if (!M) {
                 printf("Currently Matrix is not created!!\n");
                 return false;
@@ -390,7 +390,7 @@ bool duplicatevalue(matrix* M, double value) {  // Changed _Bool to bool
  *
  * @return true if resizing is successful, false otherwise.
  */
-bool resize(matrix* M) {  // Changed _Bool to bool
+bool resize(matrix* M) { 
         if (!M) {
                 printf("Currently Matrix is not created!!\n");
                 return false;
@@ -413,7 +413,7 @@ bool resize(matrix* M) {  // Changed _Bool to bool
  *
  * @return true if transposition is successful, false otherwise.
  */
-bool transpose(matrix* M) {  // Changed _Bool to bool
+bool transpose(matrix* M) {  
         if (!M) {
                 printf("Currently Matrix is not created!!\n");
                 return false;
@@ -425,7 +425,7 @@ bool transpose(matrix* M) {  // Changed _Bool to bool
         M->row = M->row - M->col;
 
         // Swapping the pointers of list
-        link_list* temp = M->rowList;  // Corrected from list_node* to link_list*
+        link_list* temp = M->rowList;
         M->rowList = M->columnList;
         M->columnList = temp;
 
@@ -489,10 +489,10 @@ void displayMatrix(matrix* M) {
                         
                         while (col_index <= M->col) {
                                 if (temp_row_ptr && temp_row_ptr->column == col_index) {
-                                        printf("%5.1f", temp_row_ptr->value);  // Changed to %5.1f for double values
+                                        printf("%6.1f", temp_row_ptr->value); 
                                         temp_row_ptr = temp_row_ptr->row_ptr;
                                 } else {
-                                        printf("%5.1f", 0.0);  // Changed to %5.1f for double values
+                                        printf("%6.1f", 0.0);  
                                 }
                                 col_index++;
                         }
@@ -505,7 +505,7 @@ void displayMatrix(matrix* M) {
                 // Print remaining rows if any
                 while (row_index <= M->row) {
                         for (uint32_t col_index = 1; col_index <= M->col; col_index++) {
-                                printf("%5.1f", 0.0);  // Changed to %5.1f for double values
+                                printf("%6.1f", 0.0);  
                         }
                         printf("\n");
                         row_index++;
@@ -514,7 +514,7 @@ void displayMatrix(matrix* M) {
                 // Print all zeros if no nodes exist
                 for (row_index = 1; row_index <= M->row; row_index++) {
                         for (uint32_t col_index = 1; col_index <= M->col; col_index++) {
-                                printf("%5.1f", 0.0);  // Changed to %5.1f for double values
+                                printf("%6.1f", 0.0);  
                         }
                         printf("\n");
                 }
