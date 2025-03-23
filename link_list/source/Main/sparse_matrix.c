@@ -1,6 +1,6 @@
 /*
  * File Name: sparse_matrix.c
- * Authors: Arpit Patel, Dharma KaPatel
+ * Authors: Arpit Patel, Dharm KaPatel
  * Date: 2025-03-19
  * Description: This file provides the main interface for interacting with the S_Matrix structure.
  *              It provides a menu-driven interface for creating, manipulating, and displaying sparse matrices.

@@ -1,6 +1,6 @@
 /*
  * File Name: patient_management_system.c
- * Authors: Arpit Patel, Dharma KaPatel
+ * Authors: Arpit Patel, Dharm KaPatel
  * Date: 2025-03-19
  * Description: This file contains the implementation of the patient management system using a priority queue.
  */

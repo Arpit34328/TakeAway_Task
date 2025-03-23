@@ -1,6 +1,6 @@
 /*
  * File Name: S_Matrix.h
- * Authors: Arpit Patel, Dharma KaPatel
+ * Authors: Arpit Patel, Dharm KaPatel
  * Date: 2025-03-19
  * Description: This file defines the basic structure and functionalities of the S_Matrix data structure.
  *              The S_Matrix is a sparse matrix implementation using linked lists for efficient storage.

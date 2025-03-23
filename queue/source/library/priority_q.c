@@ -1,6 +1,6 @@
 /*
  * File Name: priority_q.c
- * Authors: Arpit Patel, Dharma KaPatel
+ * Authors: Arpit Patel, Dharm KaPatel
  * Date: 2025-03-19
  * Description: This file implements the functions and operations of the priority queue data structure.
  */

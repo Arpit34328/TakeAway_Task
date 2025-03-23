@@ -2,11 +2,10 @@
  * File Name: main.c
  * Authors: Arpit Patel, Dharm KaPatel
  * Date: 2025-03-19
- * Description:
+ * Description: Entry point for the sparse matrix program that provides a continuous
+ *              execution loop until the user chooses to exit.
  */
 
-
-#include <stdio.h>
 #include <stdbool.h>
 
 #include "../include/S_Matrix.h"
