@@ -1,178 +1,140 @@
-# Sparse Matrix Implementation
+# Data Structures Implementation
 
-This repository contains an implementation of a sparse matrix data structure using linked lists. The implementation is designed to efficiently store and manipulate matrices with a large number of zero values.
+This repository contains implementations of two important data structures:
+1. Sparse Matrix using linked lists
+2. Priority Queue for patient management
 
-## Introduction to Sparse Matrices
+## Project Structure
 
-A sparse matrix is a matrix in which most of the elements are zero. Using a standard two-dimensional array to represent such matrices would waste a lot of memory storing these zeros. Instead, we can use more efficient representations that only store the non-zero elements.
-
-In this implementation, we use a linked list structure where each node contains information about a non-zero element (its row, column, and value) along with pointers to traverse the matrix both row-wise and column-wise.
-
-## Data Structure
-
-The data structure consists of two main components:
-
-### Node Structure
-
-```c
-typedef struct node { 
-    int row, column;
-    double value; 
-    struct node* rowPtr; 
-    struct node* colPtr; 
-} node;
+```
+.
+├── README.md
+├── link_list              # Sparse Matrix Implementation
+│   ├── Makefile
+│   └── source
+│       ├── Main
+│       │   ├── asking_for_continue.c
+│       │   ├── main.c
+│       │   └── sparse_matrix.c
+│       ├── include
+│       │   └── S_Matrix.h
+│       └── library
+│           └── S_Matrix.c
+└── queue                  # Priority Queue Implementation
+    ├── Makefile
+    └── source
+        ├── Main
+        │   ├── asking_for_continue.c
+        │   ├── main.c
+        │   └── patient_management_system.c
+        ├── include
+        │   └── priority_q.h
+        └── library
+            └── priority_q.c
 ```
 
-Each node contains:
-- `row` and `column`: The position of the element in the matrix
-- `value`: The value of the element (non-zero)
-- `rowPtr`: Pointer to the next node in the same row
-- `colPtr`: Pointer to the next node in the same column
+## Sparse Matrix Implementation
 
-### Matrix Structure
+The sparse matrix implementation efficiently stores only non-zero values using a linked list approach. This saves memory when dealing with matrices that contain many zero values.
 
-```c
-typedef struct matrix { 
-    node** rowList;    // rowList is a pointer to the array of rows 
-    node** columnList; // column list is a pointer to the array of columns
-    int rows, columns; // store the number of rows and columns of the matrix 
-} matrix;
+### Features
+
+- Create a sparse matrix with specified dimensions
+- Insert values at specific positions
+- Check for the existence of duplicate values
+- Resize the matrix by doubling its dimensions
+- Transpose the matrix
+- Display the matrix in a formatted manner
+- Memory-efficient storage of non-zero values
+
+### Usage
+
+To compile and run the sparse matrix implementation:
+
+```bash
+cd link_list
+make
+make run
 ```
 
-The matrix structure contains:
-- `rowList`: An array of pointers, where each pointer points to the first non-zero element in a row
-- `columnList`: An array of pointers, where each pointer points to the first non-zero element in a column
-- `rows` and `columns`: The dimensions of the matrix
+### Interface
 
-## Implemented Functions
+The sparse matrix provides a menu-driven interface with the following options:
 
-The following functions have been implemented to manipulate the sparse matrix:
+- **C**: Create a new matrix
+- **I**: Insert a value at a specific position
+- **D**: Check if a value exists in the matrix
+- **R**: Resize the matrix by doubling its dimensions
+- **T**: Transpose the matrix
+- **Q**: Quit and free allocated memory
 
-### 1. Matrix Initialization
+## Priority Queue Implementation
 
-Allocates memory for a new matrix of size n × m.
+The priority queue implementation is designed for a patient management system. Patients are processed based on their priority levels (lower values indicate higher priority).
 
-```c
-matrix* initMatrix(int n, int m);
+### Features
+
+- Add new patients with name and priority
+- View the patient at the front of the queue
+- Upgrade a patient's priority
+- Process the patient at the front of the queue
+- Clear the queue
+- Display the current queue state
+
+### Usage
+
+To compile and run the priority queue implementation:
+
+```bash
+cd queue
+make
+make run
 ```
 
-### 2. Node Insertion
+### Interface
 
-Inserts a node at the beginning of its respective row and column lists.
+The patient management system provides a menu-driven interface with the following options:
 
-```c
-void insertNode(matrix* M, node* ptr);
-```
+- **N**: Add a new patient
+- **F**: View the patient at the front of the queue
+- **U**: Upgrade a patient's priority
+- **P**: Process the patient at the front of the queue
+- **B**: Bulk processing (not implemented in the current version)
+- **C**: Clear the queue
+- **Q**: Quit and free allocated memory
 
-### 3. Value Existence Check
+## Technical Details
 
-Checks if a specific value exists in the matrix.
+### Sparse Matrix
 
-```c
-int duplicateValue(matrix* M, double value);
-```
+The sparse matrix uses a doubly linked list structure to store non-zero elements efficiently. Each matrix node contains:
+- Row and column indices
+- The value at that position
+- Pointers to the next nodes in the same row and column
 
-### 4. Matrix Resizing
+### Priority Queue
 
-Doubles the number of rows and columns in the matrix.
+The priority queue is implemented as a singly linked list sorted by priority. Each queue node contains:
+- Patient name
+- Priority value
+- Pointer to the next node
 
-```c
-int resize(matrix** M);
-```
+Lower priority values represent higher priority patients who will be processed first.
 
-### 5. Matrix Transposition
+## Building and Cleaning
 
-Creates the transpose of the matrix where rows become columns and columns become rows.
+Both implementations include a Makefile with the following targets:
 
-```c
-int transpose(matrix** M);
-```
+- `make`: Build the project
+- `make run`: Build and run the project
+- `make clean`: Remove all compiled files
+- `make rebuild`: Clean and rebuild the project
 
-## Implementation Details
+## Authors
 
-### Matrix Initialization
-The initialization function allocates memory for the matrix structure and its row and column lists. Each list initially points to NULL.
+- Arpit Patel
+- Dharma KaPatel
 
-### Node Insertion
-When inserting a node, we link it into both the row list and the column list:
-- Add it to the beginning of the list for its row
-- Add it to the beginning of the list for its column
+## Date
 
-### Value Existence Check
-To check if a value exists, we traverse all nodes in the matrix and compare their values with the target value.
-
-### Matrix Resizing
-Resizing involves:
-1. Creating a new matrix with twice the dimensions
-2. Copying all nodes from the old matrix to the new one
-3. Freeing the old matrix
-
-### Matrix Transposition
-For transposition:
-1. Create a new matrix with swapped dimensions
-2. For each node in the original matrix, create a new node with swapped row and column indices
-3. Insert the new node into the transposed matrix
-4. Free the original matrix
-
-## Usage Example
-
-```c
-// Initialize a 3x3 matrix
-matrix* M = initMatrix(3, 3);
-
-// Create and insert nodes
-node* n1 = createNode(0, 1, 5.0);
-node* n2 = createNode(1, 2, 3.5);
-node* n3 = createNode(2, 0, 2.0);
-
-insertNode(M, n1);
-insertNode(M, n2);
-insertNode(M, n3);
-
-// Check if value exists
-if (duplicateValue(M, 3.5)) {
-    printf("Value 3.5 exists in the matrix\n");
-}
-
-// Resize the matrix
-if (resize(&M) == 0) {
-    printf("Matrix resized successfully\n");
-}
-
-// Transpose the matrix
-if (transpose(&M) == 0) {
-    printf("Matrix transposed successfully\n");
-}
-```
-
-## Testing
-
-Unit tests have been implemented to verify the correctness of each function:
-- Test matrix initialization
-- Test node insertion
-- Test duplicate value checking
-- Test matrix resizing
-- Test matrix transposition
-
-## Coding Standards
-
-The implementation follows these coding standards:
-- Consistent indentation and formatting
-- Descriptive variable and function names
-- Proper error handling with meaningful return values
-- Memory management with appropriate allocation and deallocation
-- Documentation for functions and complex logic
-
-## References
-
-For more information about sparse matrices, you can refer to:
-- [GeeksforGeeks - Sparse Matrix Representation](https://www.geeksforgeeks.org/sparse-matrix-representation/)
-- [Wikipedia - Sparse Matrix](https://en.wikipedia.org/wiki/Sparse_matrix)
-
-## Contributing
-
-Contributions to improve the implementation are welcome. Please feel free to submit a pull request or open an issue.
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
+March 2025
