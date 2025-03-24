@@ -134,12 +134,10 @@ matrix* create_S_Matrix(uint32_t rows, uint32_t columns) {
         M->row = rows;
         M->col = columns;
 
-        // Create row and column lists
         M->rowList = create_link_list();
         M->columnList = create_link_list();
 
         if (!M->rowList || !M->columnList) {
-                // Free allocated memory if creation fails
                 if (M->rowList) free(M->rowList);
                 if (M->columnList) free(M->columnList);
                 free(M);
