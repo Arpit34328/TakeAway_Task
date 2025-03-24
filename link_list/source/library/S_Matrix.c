@@ -7,7 +7,7 @@
  */
 
 
-// Include necessary headers
+
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -396,7 +396,6 @@ bool resize(matrix* M) {
                 return false;
         }
 
-        // Double the matrix size
         M->row *= 2;
         M->col *= 2;
 
@@ -431,7 +430,7 @@ bool transpose(matrix* M) {
 
         link_list* row_ll = M->rowList;
         if (!row_ll) {
-                return true;  // No nodes to transpose
+                return false;
         }
 
         l_node* temp_node = row_ll->head;
@@ -559,7 +558,7 @@ void free_S_Matrix(matrix* M) {
                 free(back_node);
         }
 
-        // Free linked lists and matrix structure
+        // Free row list
         free(row_ll);
         
         // Free column list nodes
