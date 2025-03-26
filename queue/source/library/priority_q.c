@@ -5,12 +5,12 @@
  * Description: This file implements the functions and operations of the priority queue data structure.
  */
 
-
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 #include "../include/priority_q.h"
 
@@ -20,75 +20,70 @@
  * Creates a new node for the priority queue.
  *
  * @param pt_name - Name of the patient.
- * @param priority - Priority of the patient.
  *
  * @return Pointer to the newly created node.
  */
-q_node* create_q_node(char* pt_name, uint16_t priority){
-
+q_node* create_q_node(char* pt_name) {
         q_node* new_q_node = (q_node*)malloc(sizeof(q_node));
 
-        if (!new_q_node){
+        if (!new_q_node) {
                 printf("Failed to allocate memory for new node\n");
                 return NULL;
         }
-        
+
         new_q_node->patient_name = pt_name;
-        new_q_node->priority = priority;
         new_q_node->next = NULL;
 
         return new_q_node;
-
 }
 
 /*
  * Function: PQ
  * ----------------------------
- * Creates a new priority queue.
+ * Creates a new priority queue array.
  *
- * @return Pointer to the newly created priority queue.
+ * @return Pointer to the newly created priority queue array.
  */
-P_Queue* PQ(){
-
-        P_Queue* new_p_queue = (P_Queue*)malloc(sizeof(P_Queue));
-
-        if (!new_p_queue){
+P_Queue* PQ() {
+        P_Queue* priority_arr = (P_Queue*)malloc(4 * sizeof(P_Queue));
+        if (!priority_arr) {
                 printf("Failed to allocate memory for new queue\n");
                 return NULL;
         }
-        
-        new_p_queue->front = NULL;
-        new_p_queue->rear = NULL;
-        new_p_queue->last_priority = 0;
 
-        return new_p_queue;
+        for (uint8_t priority = 0; priority < 4; priority++) {
+                priority_arr[priority].front = NULL;
+                priority_arr[priority].rear = NULL;
+                priority_arr[priority].current_patient = 0;
+        }
 
+        priority_arr[0].max_patient = 3;
+        priority_arr[1].max_patient = 10;
+        priority_arr[2].max_patient = 15;
+        priority_arr[3].max_patient = 50;
+
+        return priority_arr;
 }
 
 /*
  * Function: FreePQ
  * ----------------------------
- * Frees the memory allocated for the priority queue.
+ * Frees the memory allocated for the priority queue array.
  *
- * @param p_queue - Pointer to the priority queue to be freed.
+ * @param p_arr - Pointer to the priority queue array to be freed.
  */
-void FreePQ(P_Queue* p_queue){
-
-        if (!pq_isEmpty(p_queue)){
-
-		q_node* temp = p_queue->front;
-
-        	while (temp->next){
-                	q_node* cur = temp;
-                	temp = temp->next;
-                	free(cur);
-        	}
-        	free(temp);
-
-	}
-        
-	free(p_queue);
-
+void FreePQ(P_Queue* p_arr) {
+        if (!pq_isEmpty(p_arr)) {
+                for (uint8_t priority = 0; priority < 4; priority++) {
+                        q_node* temp = p_arr[priority].front;
+                        while (temp) {
+                                q_node* cur = temp;
+                                temp = temp->next;
+                                free(cur);
+                        }
+                }
+        }
+        free(p_arr);
 }
 
 /*
@@ -96,87 +91,97 @@ void FreePQ(P_Queue* p_queue){
  * ----------------------------
  * Adds a new patient to the priority queue.
  *
- * @param p_queue - Pointer to the priority queue.
+ * @param p_arr - Array of priority queues.
  * @param pt_name - Name of the patient.
  * @param priority - Priority of the patient.
  */
-void pq_newPT(P_Queue* p_queue, char* pt_name, uint16_t priority){
+void pq_newPT(P_Queue* p_arr, char* pt_name, uint16_t priority) {
+        q_node* new_node = create_q_node(pt_name);
 
-        q_node* new_node = create_q_node(pt_name, priority);
-
-        if (pq_isEmpty(p_queue)){
-                p_queue->front = new_node;
-                p_queue->rear = new_node;
-                p_queue->last_priority = p_queue->front->priority;
-        }
-        else {
-                if (new_node->priority < p_queue->front->priority) {
-                        new_node->next = p_queue->front;
-                        p_queue->front = new_node;
-                }
-                else if (new_node->priority >= p_queue->last_priority) {
-                        p_queue->rear->next = new_node;
-                        p_queue->rear = new_node;
-                        p_queue->last_priority = p_queue->rear->priority;
-                }
-                else {
-                        heapify(p_queue, new_node);
-
-                        if (p_queue->rear->next) {
-                                p_queue->rear = p_queue->rear->next;
-                                p_queue->last_priority = p_queue->rear->priority;
+        if (!p_arr[priority].front) {
+                p_arr[priority].front = new_node;
+                p_arr[priority].rear = new_node;
+                p_arr[priority].current_patient++;
+        } else {
+                if (p_arr[priority].current_patient == p_arr[priority].max_patient) {
+                        if (priority == 3) {
+                                printf("You can't adjust more patients\n");
+                                return;
                         }
+
+                        printf("You can't add more patients in this priority\n");
+                        printf("You can add to next priority\n");
+                        printf("Do you want? [Y/n] ");
+                        char choice;
+                        do {
+                                clearerr(stdin);
+                                choice = getchar();
+                        } while (choice == '\n');
+
+                        if (tolower(choice) == 'y') {
+                                pq_newPT(p_arr, pt_name, priority + 1);
+                        }
+
+                        return;
                 }
+
+                p_arr[priority].rear->next = new_node;
+                p_arr[priority].rear = new_node;
+                p_arr[priority].current_patient++;
         }
 }
 
 /*
  * Function: pq_processPT
  * ----------------------------
- * Processes the patient at the front of the queue.
+ * Processes the patient at the front of the highest priority queue.
  *
- * @param p_queue - Pointer to the priority queue.
+ * @param p_arr - Pointer to the priority queue array.
  *
  * @return Name of the processed patient.
  */
-char* pq_processPT(P_Queue* p_queue){
+char* pq_processPT(P_Queue* p_arr) {
+        if (pq_isEmpty(p_arr)) {
+                return "Sorry, There is no Patient";
+        } else {
+                uint8_t priority;
+                for (priority = 0; priority < 4 && !p_arr[priority].front; priority++);
 
-        char* patient_name;
-        if (pq_isEmpty(p_queue))
-                return "Sorry, There is no Patient\n";
-        else{
-                q_node* temp = p_queue->front;
-                if (!temp->next){
-                        p_queue->front = NULL;
-                        p_queue->rear = NULL;
-                        p_queue->last_priority = 0;
+                q_node* temp = p_arr[priority].front;
+
+                if (!temp->next) {
+                        p_arr[priority].front = NULL;
+                        p_arr[priority].rear = NULL;
+                } else {
+                        p_arr[priority].front = temp->next;
                 }
-		else
-			p_queue->front = temp->next;
 
-                patient_name = temp->patient_name;
+                p_arr[priority].current_patient--;
+                char* patient_name = temp->patient_name;
                 free(temp);
+
+                return patient_name;
         }
-
-        return patient_name;
-
 }
- 
-/* Function: pq_frontName
+
+/*
+ * Function: pq_frontName
  * ----------------------------
- * Gets the name of the patient at the front of the queue.
+ * Gets the name of the patient at the front of the highest priority queue.
  *
- * @param p_queue - Pointer to the priority queue.
+ * @param p_arr - Pointer to the priority queue array.
  *
  * @return Name of the patient at the front of the queue.
  */
-char* pq_frontName(P_Queue* p_queue){
+char* pq_frontName(P_Queue* p_arr) {
+        if (pq_isEmpty(p_arr)) {
+                return "Sorry, There is no patient";
+        }
 
-        if (pq_isEmpty(p_queue))
-                return "Sorry, There is no patient\n";
+        uint8_t priority;
+        for (priority = 0; priority < 4 && !p_arr[priority].front; priority++);
 
-        return p_queue->front->patient_name;
-
+        return p_arr[priority].front->patient_name;
 }
 
 /*
@@ -184,16 +189,19 @@ char* pq_frontName(P_Queue* p_queue){
  * ----------------------------
  * Gets the priority of the patient at the front of the queue.
  *
- * @param p_queue - Pointer to the priority queue.
+ * @param p_arr - Pointer to the priority queue array.
  *
  * @return Priority of the patient at the front of the queue.
  */
-uint16_t pq_frontPriority(P_Queue* p_queue){
-
-        if (pq_isEmpty(p_queue))
+uint16_t pq_frontPriority(P_Queue* p_arr) {
+        if (pq_isEmpty(p_arr)) {
                 return 0;
-        return p_queue->front->priority;
+        }
 
+        uint8_t priority;
+        for (priority = 0; priority < 4 && !p_arr[priority].front; priority++);
+
+        return priority;
 }
 
 /*
@@ -201,143 +209,148 @@ uint16_t pq_frontPriority(P_Queue* p_queue){
  * ----------------------------
  * Upgrades the priority of a patient in the queue.
  *
- * @param p_queue - Pointer to the priority queue.
+ * @param p_arr - Pointer to the priority queue array.
  * @param patient_name - Name of the patient.
  * @param new_priority - New priority of the patient.
  */
-void pq_upgradePT(P_Queue* p_queue, char* patient_name, uint16_t new_priority){
-
-        if (pq_isEmpty(p_queue))
+void pq_upgradePT(P_Queue* p_arr, char* patient_name, uint16_t new_priority) {
+        if (pq_isEmpty(p_arr)) {
                 printf("Sorry! There is no patient\n");
-        else{
-                q_node* temp = p_queue->front;
-                q_node* back_node = NULL;
+                return;
+        }
 
-                while (temp){
-                        if (!strcmp(temp->patient_name, patient_name)){
-                                if (new_priority > temp->priority)
-                                        printf("You can not down grade the priority\n");
-                                else if(temp != p_queue->front){
-                                       
-				       	q_node* original_next = temp->next;
-                                        
-                                        back_node->next = temp->next;
-                                        temp->next = NULL;
-                                        
-                                        temp->priority = new_priority;
-                                        
-                                        heapify(p_queue, temp);
-                                        
-                                        if (p_queue->rear == temp && original_next == NULL) {
-                                                q_node* curr = p_queue->front;
-                                                while (curr->next) {
-                                                        curr = curr->next;
-                                                }
-                                                p_queue->rear = curr;
-                                                p_queue->last_priority = curr->priority;
-                                        }
-                                } 
-				else 
-                                        temp->priority = new_priority;        
-                                
+        bool found_patient = false;
+        
+        for (uint8_t priority = 0; priority < 4 && !found_patient; priority++) {
+                q_node* temp = p_arr[priority].front;
+                q_node* prev = NULL;
+
+                while (temp) {
+                        if (strcmp(temp->patient_name, patient_name) == 0) {
+                                if (priority <= new_priority) {
+                                        printf("You can't downgrade the priority\n");
+                                        return;
+                                }
+
+                                if (p_arr[new_priority].current_patient == p_arr[new_priority].max_patient) {
+                                        printf("Upper priority is already full\n");
+                                        return;
+                                }
+
+                                if (prev) {
+                                        prev->next = temp->next;
+                                } else {
+                                        p_arr[priority].front = temp->next;
+                                }
+
+                                if (temp == p_arr[priority].rear) {
+                                        p_arr[priority].rear = prev;
+                                }
+
+                                p_arr[priority].current_patient--;
+
+                                if (!p_arr[new_priority].front) {
+                                        p_arr[new_priority].front = temp;
+                                        p_arr[new_priority].rear = temp;
+                                } else {
+                                        p_arr[new_priority].rear->next = temp;
+                                        p_arr[new_priority].rear = temp;
+                                }
+
+                                temp->next = NULL;
+                                p_arr[new_priority].current_patient++;
+
+                                found_patient = true;
                                 break;
                         }
-                        back_node = temp;
+
+                        prev = temp;
                         temp = temp->next;
                 }
         }
-}
 
-/*
- * Function: heapify
- * ----------------------------
- * Reorganizes the queue to maintain the priority order after adding a new node.
- *
- * @param p_queue - Pointer to the priority queue.
- * @param pos - Pointer to the node to be inserted in the proper position.
- */
-void heapify(P_Queue* p_queue, q_node* pos){
-
-        q_node* temp = p_queue->front;
-
-        if (temp->priority > pos->priority){
-                pos->next = temp;
-                p_queue->front = pos;
+        if (!found_patient) {
+                printf("Patient not found\n");
         }
-        else{
-                while (temp->next && temp->next->priority <= pos->priority)
-                        temp = temp->next;
-                pos->next = temp->next;
-                temp->next = pos;
-        }
-
 }
 
 /*
  * Function: pq_isEmpty
  * ----------------------------
- * Checks if the priority queue is empty.
+ * Checks if the priority queue array is empty.
  *
- * @param p_queue - Pointer to the priority queue.
+ * @param p_arr - Pointer to the priority queue array.
  *
  * @return True if the queue is empty, false otherwise.
  */
-_Bool pq_isEmpty(P_Queue* p_queue){
-
-        return (!p_queue->front) ? 1 : 0;
-
+bool pq_isEmpty(P_Queue* p_arr) {
+        for (uint8_t priority = 0; priority < 4; priority++) {
+                if (p_arr[priority].front) {
+                        return false;
+                }
+        }
+        return true;
 }
 
 /*
  * Function: pq_clear
  * ----------------------------
- * Clears the priority queue.
+ * Clears all priority queues in the priority queue array.
  *
- * @param p_queue - Pointer to the priority queue.
+ * @param p_arr - Pointer to the priority queue array.
  */
-void pq_clear(P_Queue* p_queue){
-
-        if (pq_isEmpty(p_queue))
+void pq_clear(P_Queue* p_arr) {
+        if (pq_isEmpty(p_arr)) {
                 printf("Queue is already clean\n");
-        else{
-                q_node* temp = p_queue->front;
+                return;
+        }
 
-                while (temp->next){
+        for (uint8_t priority = 0; priority < 4; priority++) {
+                q_node* temp = p_arr[priority].front;
+                while (temp) {
                         q_node* cur = temp;
                         temp = temp->next;
                         free(cur);
                 }
-
-                free(temp);
+                p_arr[priority].front = NULL;
+                p_arr[priority].rear = NULL;
+                p_arr[priority].current_patient = 0;
         }
-
-        p_queue->front = NULL;
-        p_queue->rear = NULL;
-        p_queue->last_priority = 0;
-
 }
+
 
 /*
  * Function: toString
  * ----------------------------
- * Prints the current state of the priority queue.
+ * Prints the current state of the priority queue array.
  *
- * @param p_queue - Pointer to the priority queue.
+ * @param p_arr - Pointer to the priority queue array.
  */
-void toString(P_Queue* p_queue){
-
+void toString(P_Queue* p_arr) {
         printf("Current patient queue:\n");
-        if (pq_isEmpty(p_queue))
-                printf("{} (empty)\n");
-        else{
-                q_node* temp = p_queue->front;
 
-                printf("{");
-                while (temp->next){
-                        printf("%hu:%s, ", temp->priority, temp->patient_name);
-                        temp = temp->next;
-                }
-                printf("%hu:%s} (not empty)\n", temp->priority, temp->patient_name);
+        if (pq_isEmpty(p_arr)) {
+                printf("{} (empty)\n");
+                return;
         }
 
+        printf("{");
+        bool first_patient = true;
+        for (uint8_t priority = 0; priority < 4; priority++) {
+                q_node* temp = p_arr[priority].front;
+                while (temp) {
+                        if (!first_patient) {
+                                printf(", ");
+                        }
+			if (priority == 0){
+				printf("Emergency: %s", temp->patient_name);
+			}
+			else{
+                        	printf("%hhu:%s", priority, temp->patient_name);
+			}
+			temp = temp->next;
+                        first_patient = false;
+                }
+        }
+        printf("} (not empty)\n");
 }
